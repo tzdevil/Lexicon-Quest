@@ -22,6 +22,8 @@ namespace WordSleuth.Gameplay
         [SerializeField] private TMP_Text _scoreText;
         [SerializeField] private GameObject _guessWordPanel;
         [SerializeField] private TMP_InputField _guessInput;
+        [SerializeField] private TMP_Text _correctWord;
+        [SerializeField] private GameObject _continuePanel;
 
         [Header("Data References")]
         [SerializeField] private List<string> _textData;
@@ -39,6 +41,7 @@ namespace WordSleuth.Gameplay
         [Header("Guessing Related")]
         [SerializeField] private float _guessingTime;
         [SerializeField] private bool _guessing;
+        [SerializeField] private bool _canContinue;
 
         [Header("Canvas Related")]
         [SerializeField] private RectTransform _letterBackgroundPrefab;
@@ -50,6 +53,7 @@ namespace WordSleuth.Gameplay
             _gameTime = 180;
             _random = new System.Random();
             _guessingTimeText.gameObject.SetActive(false);
+            _continuePanel.SetActive(false);
 
             _scoreText.SetText($"Score: 0");
             _scoreText.SetText($"Question: 0");
@@ -72,6 +76,9 @@ namespace WordSleuth.Gameplay
 
             if (_guessing && Input.GetKeyDown(KeyCode.Return))
                 ConfirmGuess();
+
+            if (_canContinue && Input.GetKeyDown(KeyCode.Return))
+                StartNewRound();
         }
 
         private void CheckGameTime()
@@ -123,15 +130,9 @@ namespace WordSleuth.Gameplay
             }
         }
 
-        private void GetNewWord()
-        {
-            _currentWordIndex++;
-            ChooseWord(_currentWordIndex);
-        }
-
         private void ReadData()
         {
-            TextAsset _data = Resources.Load<TextAsset>("Words");
+            TextAsset _data = Resources.Load<TextAsset>("EnglishWords");
             string[] wordData = _data.text.Replace(" ", "").Split('\n');
             _textData = wordData.Where(word => word.Length > 4 && word.Length <= 10)
                                 .Select(w => w[..^1])
@@ -171,8 +172,8 @@ namespace WordSleuth.Gameplay
             _currentWord = _wordList[index];
             _playing = true;
 
-            foreach (var t in _letterTexts)
-                t.SetText("");
+            foreach (var l in _letterTexts)
+                l.SetText("");
 
             if (index == 0)
             {
@@ -200,15 +201,13 @@ namespace WordSleuth.Gameplay
             if (!_playing)
                 return;
 
-            // TODO:
-            // Bir InputField oluþturacaðým, oraya guess'imizi yazacaðýz. Doðru ise GuessWord(true), yanlýþ ise InputField'ý sýfýrlayacak ve baþtan yazabileceðiz.
-
             _playing = false;
-            _guessingTime = 24;
+            _guessingTime = 20;
             _guessing = true;
             _guessInput.text = "";
             _guessWordPanel.SetActive(true);
             _guessingTimeText.gameObject.SetActive(true);
+            _guessInput.ActivateInputField();
         }
 
         public void ConfirmGuess()
@@ -218,11 +217,17 @@ namespace WordSleuth.Gameplay
             if (word == _currentWord.Word.ToUpperInvariant())
                 GuessWord(true);
             else
+            {
                 _guessInput.text = "";
+                _guessInput.ActivateInputField();
+            }
         }
 
         private void GuessWord(bool guessedCorrect)
         {
+            _correctWord.SetText(_currentWord.Word);
+            _continuePanel.SetActive(true);
+
             _guessWordPanel.SetActive(false);
             _guessingTimeText.gameObject.SetActive(false);
 
@@ -235,8 +240,26 @@ namespace WordSleuth.Gameplay
             _scoreText.SetText($"Score: {_score}");
 
             _guessing = false;
+            _canContinue = true;
+        }
 
-            GetNewWord();
+        public void StartNewRound()
+        {
+            _canContinue = false;
+
+            _continuePanel.SetActive(false);
+
+            _currentWordIndex++;
+
+            if (_currentWordIndex == 12)
+                GameOver();
+            else
+                ChooseWord(_currentWordIndex);
+        }
+
+        private void GameOver()
+        {
+            print("Game over.");
         }
     }
 }
