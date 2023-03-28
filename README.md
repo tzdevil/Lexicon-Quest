@@ -1,5 +1,30 @@
 # Word-Sleuth
 
+# Version 0.2.2
+
+<div id="user-content-toc">
+  <ul>
+    <summary><h2 style="display:border-bottom: none;">Gameplay Updates</h2></summary>
+  </ul>
+</div>
+
+- You will now be able to answer questions or move to the next question by pressing Enter on the Keypad as well.
+- There will be a short Loading Panel before the game starts.
+- You can now get a new letter by pressing L.
+- You can now guess the word by pressing G.
+- Game Over screen has been added.
+- Pause Menu screen has been added. You can also pause the game by pressing ESC.
+
+<div id="user-content-toc">
+  <ul>
+    <summary><h2 style="display:border-bottom: none;">Bug Fixes</h2></summary>
+  </ul>
+</div>
+
+- Fixed a bug where Question Index text was confused with Score text
+
+<ul></ul>
+
 # Version 0.2.1
 
 <div id="user-content-toc">
