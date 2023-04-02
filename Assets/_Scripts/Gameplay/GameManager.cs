@@ -27,6 +27,7 @@ namespace WordSleuth.Gameplay
         [SerializeField] private TMP_Text _gameTimeText;
         [SerializeField] private TMP_Text _guessingTimeText;
         [SerializeField] private TMP_Text _scoreText;
+        [SerializeField] private TMP_Text _scoreYouCanGainText;
         [SerializeField] private GameObject _pauseButton;
 
         [Header("Game UI References")]
@@ -63,7 +64,8 @@ namespace WordSleuth.Gameplay
         [SerializeField] private bool _paused;
         [SerializeField] private float _gameTime;
         [SerializeField] private int _questionIndex;
-        [SerializeField] private int _score;
+        [SerializeField] private int _currentScore;
+        [SerializeField] private int _scoreYouCanGain;
         [SerializeField] private int _correctAnswersCount;
 
         [Header("Guessing Related")]
@@ -101,9 +103,9 @@ namespace WordSleuth.Gameplay
         {
             string minutes = ((int)(_gameTime / 60)).ToString().PadLeft(2, '0');
             string seconds = ((int)(_gameTime % 60)).ToString().PadLeft(2, '0');
-            _gameTimeText.SetText($"Time: {minutes}:{seconds}");
-            _scoreText.SetText($"Score: 0");
-            _questionIndexText.SetText($"Question: 0");
+            _gameTimeText.SetText($"{minutes}:{seconds}");
+            _scoreText.SetText($"0");
+            _questionIndexText.SetText($"Question: 1/12");
         }
 
         private void InitPanels()
@@ -164,7 +166,7 @@ namespace WordSleuth.Gameplay
                 {
                     string minutes = ((int)(_gameTime / 60)).ToString().PadLeft(2, '0');
                     string seconds = ((int)(_gameTime % 60)).ToString().PadLeft(2, '0');
-                    _gameTimeText.SetText($"Time: {minutes}:{seconds}");
+                    _gameTimeText.SetText($"{minutes}:{seconds}");
                 }
             }
         }
@@ -197,6 +199,9 @@ namespace WordSleuth.Gameplay
                 _currentWord.VisibleLetterCount++;
 
                 _letterTexts[letterForIndex.Index].SetText(letterInWord.ToString());
+
+                _scoreYouCanGain -= 100;
+                _scoreYouCanGainText.SetText(_scoreYouCanGain.ToString());
             }
         }
 
@@ -253,7 +258,7 @@ namespace WordSleuth.Gameplay
                 {
                     var letterBg = Instantiate(_letterBackgroundPrefab, _lettersTransform);
                     _letterRectTransforms.Add(letterBg);
-                    letterBg.anchoredPosition = new(-700 + 125 * i, -135);
+                    letterBg.anchoredPosition = new(-756.5f + 115 * i, -35);
                     _letterTexts.Add(letterBg.GetChild(0).GetComponent<TMP_Text>());
                 }
             }
@@ -261,13 +266,16 @@ namespace WordSleuth.Gameplay
             {
                 var letterBg = Instantiate(_letterBackgroundPrefab, _lettersTransform);
                 _letterRectTransforms.Add(letterBg);
-                letterBg.anchoredPosition = new(-700 + 125 * (_currentWord.Length - 1), -135);
+                letterBg.anchoredPosition = new(-756.5f + 115 * (_currentWord.Length - 1), -35);
                 _letterTexts.Add(letterBg.GetChild(0).GetComponent<TMP_Text>());
             }
 
             _definitionText.SetText(_currentWord.Definition);
-            _questionIndexText.SetText($"Question: {_questionIndex}");
+            _questionIndexText.SetText($"Question: {_questionIndex+1}/12");
             _playing = true;
+
+            _scoreYouCanGain = _currentWord.Length * 100;
+            _scoreYouCanGainText.SetText(_scoreYouCanGain.ToString());
         }
 
         public void TryGuessWord()
@@ -308,9 +316,9 @@ namespace WordSleuth.Gameplay
                 _correctAnswersCount++;
 
             var score = 100 * (_currentWord.Length - _currentWord.VisibleLetterCount);
-            _score = Mathf.Clamp(_score + (guessedCorrect ? score : -score), 0, 9999999);
+            _currentScore = Mathf.Clamp(_currentScore + (guessedCorrect ? score : -score), 0, 9999999);
 
-            _scoreText.SetText($"Score: {_score}");
+            _scoreText.SetText(_currentScore.ToString());
 
             _guessing = false;
             _canContinue = true;
@@ -332,10 +340,10 @@ namespace WordSleuth.Gameplay
 
         private void GameOver()
         {
-            _gameEvents.RaiseNewHighscore(new(_score, _gameTime));
+            _gameEvents.RaiseNewHighscore(new(_currentScore, _gameTime));
 
             _playing = false;
-            _finalScoreText.SetText($"Score: {_score}");
+            _finalScoreText.SetText($"Score: {_currentScore}");
             _lastQuestionText.SetText($"Last Question: {_questionIndex}");
             _correctAnswersText.SetText($"Correct Answers: {_correctAnswersCount}");
 
@@ -353,7 +361,7 @@ namespace WordSleuth.Gameplay
             InitPanels();
 
             _questionIndex = 0;
-            _score = 0;
+            _currentScore = 0;
             _gameTime = 180;
             _wordList.Clear();
             _currentWord = null;

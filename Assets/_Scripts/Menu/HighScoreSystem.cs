@@ -43,7 +43,7 @@ namespace WordSleuth.Menu
         private void NewHighScore(HighScore highscore)
         {
             _highScores.Add(highscore);
-            _highScores = _highScores.OrderBy(h => h.Score).ThenBy(k => k.Time).ToList();
+            _highScores = _highScores.OrderByDescending(h => h.Score).ThenByDescending(k => k.Time).ToList();
             SaveGame();
         }
         #endregion
