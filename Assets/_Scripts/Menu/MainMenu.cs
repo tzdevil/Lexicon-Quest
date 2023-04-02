@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace WordSleuth.Menu
+namespace LexiconQuest.Menu
 {
     public class MainMenu : MonoBehaviour
     {

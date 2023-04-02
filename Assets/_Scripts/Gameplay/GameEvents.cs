@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace WordSleuth.Gameplay
+namespace LexiconQuest.Gameplay
 {
     public class GameEvents : MonoBehaviour
     {

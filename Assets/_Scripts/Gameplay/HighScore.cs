@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace WordSleuth.Gameplay
+namespace LexiconQuest.Gameplay
 {
     [Serializable]
     public class HighScore

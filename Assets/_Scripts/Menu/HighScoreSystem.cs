@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
-using WordSleuth.Gameplay;
+using LexiconQuest.Gameplay;
 
-namespace WordSleuth.Menu
+namespace LexiconQuest.Menu
 {
     public class HighScoreSystem : MonoBehaviour
     {

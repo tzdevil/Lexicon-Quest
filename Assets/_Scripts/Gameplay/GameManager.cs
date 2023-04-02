@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
-namespace WordSleuth.Gameplay
+namespace LexiconQuest.Gameplay
 {
     public class GameManager : MonoBehaviour
     {
