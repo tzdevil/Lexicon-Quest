@@ -1,4 +1,4 @@
-# Word-Sleuth
+# Lexicon Quest
 
 ## Version 0.3.0
 
